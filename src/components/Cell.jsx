@@ -10,12 +10,13 @@ export default function Cell({ cell }) {
   const sameCol = selected && selected.col === col
   const sameBox = selected && Math.floor(selected.row / 3) === Math.floor(row / 3) && Math.floor(selected.col / 3) === Math.floor(col / 3)
 
-  const base = 'w-10 h-10 flex items-center justify-center text-lg cursor-pointer select-none'
+  const base = 'interactive w-10 h-10 md:w-11 md:h-11 flex items-center justify-center text-lg cursor-pointer select-none transition-all duration-150'
   let classes = base + ' border'
-  if (isFixed) classes += ' bg-gray-200 font-semibold'
-  if (isSelected) classes += ' bg-blue-300'
-  else if (sameRow || sameCol || sameBox) classes += ' bg-blue-100'
-  if (isError) classes += ' bg-red-200'
+  if (isFixed) classes += ' bg-slate-200/90 font-semibold text-slate-700'
+  if (isSelected) classes += ' bg-blue-300 shadow-inner ring-2 ring-blue-500/35'
+  else if (sameRow || sameCol || sameBox) classes += ' bg-blue-50'
+  if (isError) classes += ' bg-red-200 text-red-900'
+  if (!isFixed && !isError && !isSelected) classes += ' hover:bg-blue-100'
 
   function onClick() {
     selectCell(row, col)
@@ -32,7 +33,7 @@ export default function Cell({ cell }) {
       tabIndex={0}
       onClick={onClick}
       onKeyDown={onKeyDown}
-      className={classes + ' outline-none'}
+      className={classes + ' outline-none focus:ring-2 focus:ring-blue-400/50'}
       role="button"
       aria-label={`Cell ${row + 1}-${col + 1}`}>
       {value || ''}

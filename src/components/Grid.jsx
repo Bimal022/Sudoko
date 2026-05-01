@@ -13,7 +13,7 @@ export default function Grid() {
   const { grid } = useGame()
 
   return (
-    <div className="inline-block p-2 bg-white shadow-md">
+    <div className="inline-block glass-panel p-3 animate-fade-up">
       <div className="grid grid-cols-9 gap-0">
         {grid.map((row, r) =>
           row.map((cell, c) => (

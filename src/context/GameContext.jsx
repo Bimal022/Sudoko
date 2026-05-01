@@ -2,6 +2,8 @@ import React, { createContext, useContext, useEffect, useState, useRef } from 'r
 import { createExampleGrid } from '../utils/sudoku'
 import solver from '../utils/sudokuSolver'
 import { createCell, createFixedCell } from '../models'
+import { getCurrentUser, signInAnonymouslyUser } from '../services/authService'
+import { recordGameResult } from '../services/leaderboardService'
 
 const GameContext = createContext(null)
 
@@ -17,7 +19,9 @@ export function GameProvider({ children, initialGrid = null }) {
   const [seconds, setSeconds] = useState(0)
   const [started, setStarted] = useState(false)
   const [win, setWin] = useState(false)
+  const [difficulty, setDifficulty] = useState('medium')
   const timerRef = useRef(null)
+  const recordedWinRef = useRef(false)
 
   // compute solution from fixed cells
   const [solution, setSolution] = useState(null)
@@ -41,6 +45,34 @@ export function GameProvider({ children, initialGrid = null }) {
     return () => clearInterval(timerRef.current)
   }, [started])
 
+  useEffect(() => {
+    async function persistScore() {
+      if (!win || recordedWinRef.current) return
+      recordedWinRef.current = true
+
+      let user = getCurrentUser()
+      if (!user) {
+        try {
+          const result = await signInAnonymouslyUser()
+          user = result.user
+        } catch (error) {
+          return
+        }
+      }
+
+      await recordGameResult({
+        userId: user.uid,
+        displayName: user.displayName || (user.isAnonymous ? 'Anonymous' : 'Player'),
+        timeSeconds: seconds,
+        difficulty,
+        result: 1,
+        opponentRating: difficulty === 'hard' ? 1400 : difficulty === 'medium' ? 1200 : 1000
+      })
+    }
+
+    persistScore()
+  }, [win, seconds, difficulty])
+
   function selectCell(row, col) {
     setSelected({ row, col })
   }
@@ -52,6 +84,7 @@ export function GameProvider({ children, initialGrid = null }) {
     setSeconds(0)
     setStarted(false)
     setWin(false)
+    recordedWinRef.current = false
   }
 
   function checkAndMarkErrors(gridCells) {
@@ -100,6 +133,7 @@ export function GameProvider({ children, initialGrid = null }) {
   }
 
   function newGame(difficulty = 'medium') {
+    setDifficulty(difficulty)
     const nums = solver.generatePuzzle(difficulty)
     const newGrid = buildGridFromNumbers(nums)
     resetGame(newGrid)
@@ -113,6 +147,7 @@ export function GameProvider({ children, initialGrid = null }) {
     mistakes,
     started,
     win,
+    difficulty,
     selectCell,
     updateValue,
     resetGame,
