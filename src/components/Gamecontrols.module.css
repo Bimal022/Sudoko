@@ -1,0 +1,87 @@
+.bar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: .5rem;
+}
+
+.stats {
+  display: flex;
+  flex-wrap: wrap;
+  gap: .4rem;
+}
+
+.pill {
+  background: #fff;
+  border: 1px solid var(--surface3);
+  border-radius: 20px;
+  padding: .3rem .85rem;
+  font-size: .82rem;
+  color: var(--ink2);
+  display: flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.pillIcon { font-size: .8rem; }
+
+.pillVal {
+  font-family: var(--font-mono);
+  font-weight: 500;
+  color: var(--ink);
+  font-size: .88rem;
+}
+
+.pillSub {
+  font-size: .72rem;
+  color: var(--ink3);
+}
+
+.diffPill {
+  background: var(--surface3);
+  border-color: var(--accent3);
+  color: var(--accent);
+  font-weight: 500;
+  font-size: .8rem;
+}
+
+.buttons {
+  display: flex;
+  gap: .4rem;
+  margin-left: .25rem;
+}
+
+.diffBtn {
+  border: 1.5px solid var(--surface3);
+  background: #fff;
+  border-radius: 8px;
+  padding: .3rem .75rem;
+  font-size: .78rem;
+  font-weight: 500;
+  cursor: pointer;
+  font-family: var(--font-body);
+  color: var(--ink2);
+  transition: all .15s;
+}
+.diffBtn:hover { background: var(--surface2); border-color: var(--accent3); }
+.diffBtn.active {
+  background: var(--accent);
+  border-color: var(--accent);
+  color: #fff;
+}
+
+.winBadge {
+  background: #f0fff8;
+  border: 1.5px solid #a0e0c0;
+  border-radius: 20px;
+  padding: .3rem .9rem;
+  font-size: .82rem;
+  font-weight: 600;
+  color: #22a06b;
+  animation: pulse 1.5s ease infinite;
+}
+
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .7; }
+}

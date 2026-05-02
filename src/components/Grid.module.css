@@ -1,0 +1,19 @@
+.wrapper {
+  display: inline-block;
+  background: #fff;
+  border: var(--grid-border);
+  border-radius: 16px;
+  padding: .6rem;
+  box-shadow: 0 4px 24px rgba(108, 71, 255, .1);
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(9, var(--cell-size));
+  grid-template-rows: repeat(9, var(--cell-size));
+}
+
+.cellWrap { display: contents; }
+
+.boxRight  > div { border-right: var(--grid-border) !important; }
+.boxBottom > div { border-bottom: var(--grid-border) !important; }

@@ -1,41 +1,73 @@
-import React from 'react'
+import React, { useRef, useEffect } from 'react'
 import { useGame } from '../context/GameContext'
+import styles from './Cell.module.css'
 
 export default function Cell({ cell }) {
   const { selected, selectCell, updateValue } = useGame()
-  const { row, col, value, isFixed, isError } = cell
+  const { row, col, value, fixed, error } = cell
+  const ref = useRef(null)
 
-  const isSelected = selected && selected.row === row && selected.col === col
-  const sameRow = selected && selected.row === row
-  const sameCol = selected && selected.col === col
-  const sameBox = selected && Math.floor(selected.row / 3) === Math.floor(row / 3) && Math.floor(selected.col / 3) === Math.floor(col / 3)
+  const isSelected  = selected?.row === row && selected?.col === col
+  const sameRow     = selected?.row === row
+  const sameCol     = selected?.col === col
+  const sameBox     = selected &&
+    Math.floor(selected.row / 3) === Math.floor(row / 3) &&
+    Math.floor(selected.col / 3) === Math.floor(col / 3)
 
-  const base = 'interactive w-10 h-10 md:w-11 md:h-11 flex items-center justify-center text-lg cursor-pointer select-none transition-all duration-150'
-  let classes = base + ' border'
-  if (isFixed) classes += ' bg-slate-200/90 font-semibold text-slate-700'
-  if (isSelected) classes += ' bg-blue-300 shadow-inner ring-2 ring-blue-500/35'
-  else if (sameRow || sameCol || sameBox) classes += ' bg-blue-50'
-  if (isError) classes += ' bg-red-200 text-red-900'
-  if (!isFixed && !isError && !isSelected) classes += ' hover:bg-blue-100'
+  // pop animation on correct value placed
+  const prevValue = useRef(value)
+  useEffect(() => {
+    if (value && value !== prevValue.current && !error && ref.current) {
+      ref.current.classList.remove(styles.pop)
+      void ref.current.offsetWidth
+      ref.current.classList.add(styles.pop)
+    }
+    if (error && ref.current) {
+      ref.current.classList.remove(styles.shake)
+      void ref.current.offsetWidth
+      ref.current.classList.add(styles.shake)
+    }
+    prevValue.current = value
+  }, [value, error])
 
-  function onClick() {
-    selectCell(row, col)
+  function handleClick() { selectCell(row, col) }
+
+  function handleKeyDown(e) {
+    if (/^[1-9]$/.test(e.key)) updateValue(row, col, Number(e.key))
+    if (e.key === 'Backspace' || e.key === 'Delete' || e.key === '0') updateValue(row, col, null)
+    if (e.key === 'ArrowRight') moveFocus(row, col + 1)
+    if (e.key === 'ArrowLeft')  moveFocus(row, col - 1)
+    if (e.key === 'ArrowDown')  moveFocus(row + 1, col)
+    if (e.key === 'ArrowUp')    moveFocus(row - 1, col)
   }
 
-  function onKeyDown(e) {
-    const k = e.key
-    if (/^[1-9]$/.test(k)) updateValue(row, col, Number(k))
-    if (k === 'Backspace' || k === 'Delete' || k === '0') updateValue(row, col, null)
+  function moveFocus(r, c) {
+    const nr = Math.max(0, Math.min(8, r))
+    const nc = Math.max(0, Math.min(8, c))
+    selectCell(nr, nc)
+    document.querySelector(`[data-cell="${nr}-${nc}"]`)?.focus()
   }
+
+  const cls = [
+    styles.cell,
+    fixed      ? styles.fixed    : '',
+    error      ? styles.error    : '',
+    isSelected ? styles.selected : (sameRow || sameCol || sameBox) ? styles.highlight : '',
+    !fixed && !error && !isSelected ? styles.interactive : '',
+    value && !fixed ? styles.userVal : '',
+  ].filter(Boolean).join(' ')
 
   return (
     <div
+      ref={ref}
       tabIndex={0}
-      onClick={onClick}
-      onKeyDown={onKeyDown}
-      className={classes + ' outline-none focus:ring-2 focus:ring-blue-400/50'}
       role="button"
-      aria-label={`Cell ${row + 1}-${col + 1}`}>
+      aria-label={`Row ${row + 1} Column ${col + 1}${value ? ` value ${value}` : ''}`}
+      data-cell={`${row}-${col}`}
+      className={cls}
+      onClick={handleClick}
+      onKeyDown={handleKeyDown}
+    >
       {value || ''}
     </div>
   )

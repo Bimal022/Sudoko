@@ -1,24 +1,37 @@
-import React from 'react'
+import React, { useState, useEffect } from 'react'
 import Grid from '../components/Grid'
 import NumberPad from '../components/NumberPad'
 import MascotFeedback from '../components/MascotFeedback'
+import WinModal from '../components/WinModal'
+import { useGame } from '../context/GameContext'
+import styles from './Home.module.css'
 
 export default function Home() {
+  const { win } = useGame()
+  const [showWin, setShowWin] = useState(false)
+
+  useEffect(() => {
+    if (win) setShowWin(true)
+  }, [win])
+
   return (
-    <section className="animate-fade-up">
-      <div className="mb-5">
-        <h2 className="text-2xl font-semibold tracking-tight" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Play Sudoku</h2>
-        <p className="mt-1 text-sm text-slate-600">Fast moves, clean focus, and gentle feedback while you solve.</p>
+    <section className={styles.section}>
+      <div className={styles.intro}>
+        <h2 className={styles.heading}>Play Sudoku</h2>
+        <p className={styles.sub}>Fast moves, clean focus, and gentle feedback while you solve.</p>
       </div>
-      <div className="grid gap-6 lg:grid-cols-[auto_320px]">
-        <div className="stagger">
+
+      <div className={styles.layout}>
+        <div className={styles.gridArea}>
           <Grid />
         </div>
-        <div className="stagger space-y-4">
+        <div className={styles.sideArea}>
           <NumberPad />
           <MascotFeedback />
         </div>
       </div>
+
+      {showWin && <WinModal onClose={() => setShowWin(false)} />}
     </section>
   )
 }

@@ -1,36 +1,48 @@
-import React from 'react'
+import React, { useMemo } from 'react'
 import { useGame } from '../context/GameContext'
+import styles from './NumberPad.module.css'
 
 export default function NumberPad() {
-  const { selected, updateValue } = useGame()
+  const { grid, selected, updateValue } = useGame()
+
+  const usedCounts = useMemo(() => {
+    const counts = Array(10).fill(0)
+    grid.forEach(row => row.forEach(cell => {
+      if (cell.value && !cell.error) counts[cell.value]++
+    }))
+    return counts
+  }, [grid])
 
   function handleNumber(n) {
     if (!selected) return
     updateValue(selected.row, selected.col, n)
   }
 
+  function handleErase() {
+    if (!selected) return
+    updateValue(selected.row, selected.col, null)
+  }
+
   return (
-    <div className="glass-panel mt-2 p-4 animate-fade-up">
-      <div className="mb-2 text-xs uppercase tracking-wide text-slate-500">Number Input</div>
-      <div className="grid grid-cols-3 gap-2 w-full max-w-[220px]">
+    <div className={styles.panel}>
+      <p className={styles.label}>Number Input</p>
+      <div className={styles.pad}>
         {[1,2,3,4,5,6,7,8,9].map(n => (
           <button
             key={n}
+            className={`${styles.numBtn} ${usedCounts[n] >= 9 ? styles.used : ''}`}
             onClick={() => handleNumber(n)}
-            className="interactive rounded-lg border border-slate-200 bg-slate-50 py-2 text-lg font-semibold text-slate-700 hover:bg-blue-100"
+            aria-label={`Place ${n}`}
           >
             {n}
           </button>
         ))}
       </div>
-      <div className="mt-3 flex items-center gap-3">
-        <button
-          onClick={() => { if (selected) updateValue(selected.row, selected.col, null) }}
-          className="interactive rounded-lg border border-red-200 bg-red-50 px-4 py-2 text-red-700 hover:bg-red-100"
-        >
-          Erase
+      <div className={styles.footer}>
+        <button className={styles.eraseBtn} onClick={handleErase}>
+          ✕ Erase
         </button>
-        <div className="text-xs text-slate-500">Tip: select a cell first</div>
+        <span className={styles.tip}>Select a cell first</span>
       </div>
     </div>
   )

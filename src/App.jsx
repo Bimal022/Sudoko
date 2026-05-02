@@ -1,36 +1,42 @@
-import React, { useEffect, useState } from 'react'
-import Layout from './components/Layout'
+import React from 'react'
+import { AuthProvider, useAuth } from './context/AuthContext'
 import { GameProvider } from './context/GameContext'
+import LoginScreen from './components/LoginScreen'
+import Layout from './components/Layout'
 import Home from './pages/Home'
-import Learn from './pages/Learn'
-import Practice from './pages/Practice'
-import Leaderboard from './pages/Leaderboard'
-import Multiplayer from './pages/Multiplayer'
+import './index.css'
 
-function Router({ route }) {
-  if (route === '/learn') return <Learn />
-  if (route === '/practice') return <Practice />
-  if (route === '/leaderboard') return <Leaderboard />
-  if (route === '/multiplayer') return <Multiplayer />
-  return <Home />
-}
+function AppInner() {
+  const { user } = useAuth()
 
-export default function App() {
-  const [route, setRoute] = useState(window.location.hash.replace('#', '') || '/')
+  // Still loading auth state
+  if (user === undefined) {
+    return (
+      <div style={{ display: 'flex', alignItems: 'center', justifyContent: 'center', height: '100vh' }}>
+        <div style={{ fontFamily: 'var(--font-mono)', color: 'var(--ink3)', fontSize: '.9rem' }}>
+          Loading…
+        </div>
+      </div>
+    )
+  }
 
-  useEffect(() => {
-    function onHash() {
-      setRoute(window.location.hash.replace('#', '') || '/')
-    }
-    window.addEventListener('hashchange', onHash)
-    return () => window.removeEventListener('hashchange', onHash)
-  }, [])
+  // Not logged in — show auth screen
+  if (!user) return <LoginScreen />
 
+  // Logged in — show game
   return (
     <GameProvider>
       <Layout>
-        <Router route={route} />
+        <Home />
       </Layout>
     </GameProvider>
+  )
+}
+
+export default function App() {
+  return (
+    <AuthProvider>
+      <AppInner />
+    </AuthProvider>
   )
 }

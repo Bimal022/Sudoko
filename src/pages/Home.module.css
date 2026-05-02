@@ -1,0 +1,40 @@
+.section { animation: fadeUp .45s ease both; }
+
+.intro { margin-bottom: 1.25rem; }
+
+.heading {
+  font-family: var(--font-display);
+  font-size: 1.9rem;
+  color: var(--ink);
+  letter-spacing: -.5px;
+}
+
+.sub {
+  margin-top: .3rem;
+  font-size: .88rem;
+  color: var(--ink3);
+}
+
+.layout {
+  display: grid;
+  grid-template-columns: 1fr;
+  gap: 1.25rem;
+}
+
+@media (min-width: 700px) {
+  .layout { grid-template-columns: auto 1fr; }
+}
+
+.gridArea { /* contains the sudoku board */ }
+
+.sideArea {
+  display: flex;
+  flex-direction: column;
+  gap: .75rem;
+  max-width: 320px;
+}
+
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(10px); }
+  to   { opacity: 1; transform: translateY(0); }
+}

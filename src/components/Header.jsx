@@ -1,21 +1,41 @@
 import React from 'react'
 import GameControls from './GameControls'
+import { useAuth } from '../context/AuthContext'
+import styles from './Header.module.css'
 
 export default function Header() {
+  const { user, logoutUser } = useAuth()
+
+  const displayName = user?.isAnonymous
+    ? 'Guest'
+    : (user?.displayName || user?.email?.split('@')[0] || 'Player')
+
+  const initials = displayName.slice(0, 1).toUpperCase()
+
   return (
-    <header className="sticky top-0 z-20 border-b border-slate-200/70 bg-white/80 backdrop-blur-md shadow-sm">
-      <div className="app-container flex flex-col gap-4 py-4 lg:flex-row lg:items-center lg:justify-between">
-        <div className="flex flex-col gap-2 lg:flex-row lg:items-center lg:gap-6">
-          <h1 className="text-2xl font-bold tracking-tight" style={{ fontFamily: 'Space Grotesk, sans-serif' }}>Sudoku Arena</h1>
-          <nav className="flex flex-wrap items-center text-sm text-slate-600">
-            <a className="mr-4 transition-colors hover:text-blue-600" href="#/">Home</a>
-            <a className="mr-4 transition-colors hover:text-blue-600" href="#/learn">Learn</a>
-            <a className="mr-4 transition-colors hover:text-blue-600" href="#/practice">Practice</a>
-            <a className="mr-4 transition-colors hover:text-blue-600" href="#/leaderboard">Leaderboard</a>
-            <a className="transition-colors hover:text-blue-600" href="#/multiplayer">Multiplayer</a>
+    <header className={styles.header}>
+      <div className={styles.inner}>
+        <div className={styles.left}>
+          <h1 className={styles.logo}>Sudoku Arena</h1>
+          <nav className={styles.nav}>
+            <a href="#/">Home</a>
+            <a href="#/learn">Learn</a>
+            <a href="#/practice">Practice</a>
+            <a href="#/leaderboard">Leaderboard</a>
+            <a href="#/multiplayer">Multiplayer</a>
           </nav>
         </div>
-        <GameControls />
+
+        <div className={styles.right}>
+          <GameControls />
+          <div className={styles.userChip}>
+            <div className={styles.avatar}>{initials}</div>
+            <span className={styles.userName}>{displayName}</span>
+          </div>
+          <button className={styles.signOutBtn} onClick={logoutUser}>
+            Sign out
+          </button>
+        </div>
       </div>
     </header>
   )

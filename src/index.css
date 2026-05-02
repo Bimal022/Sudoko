@@ -1,114 +1,52 @@
-@import url('https://fonts.googleapis.com/css2?family=Sora:wght@400;500;600;700&family=Space+Grotesk:wght@500;700&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Serif+Display:ital@0;1&family=DM+Mono:wght@400;500&family=Outfit:wght@300;400;500;600&display=swap');
 
-@tailwind base;
-@tailwind components;
-@tailwind utilities;
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
 
 :root {
-  --bg-1: #f2f6ff;
-  --bg-2: #f9fbff;
-  --ink: #1a2140;
-  --panel: #ffffff;
-  --line: #d7ddf2;
-  --brand: #2563eb;
-  --brand-soft: #dbeafe;
-  --accent: #14b8a6;
-  --danger-soft: #fee2e2;
-}
-
-* {
-  box-sizing: border-box;
-}
-
-html, body, #root {
-  height: 100%;
+  --ink: #1a1a2e;
+  --ink2: #4a4a6a;
+  --ink3: #9898b8;
+  --surface: #f8f7ff;
+  --surface2: #f0eeff;
+  --surface3: #e8e4ff;
+  --accent: #6c47ff;
+  --accent2: #9b77ff;
+  --accent3: #c4aaff;
+  --rose: #ff5fa0;
+  --cell-size: 44px;
+  --grid-border: 2px solid #1a1a2e;
+  --font-display: 'DM Serif Display', serif;
+  --font-body: 'Outfit', sans-serif;
+  --font-mono: 'DM Mono', monospace;
 }
 
 body {
-  margin: 0;
-  font-family: 'Sora', sans-serif;
+  font-family: var(--font-body);
+  background: var(--surface);
   color: var(--ink);
-  background:
-    radial-gradient(900px 500px at -15% -10%, #dfe7ff 0%, transparent 60%),
-    radial-gradient(700px 400px at 120% 0%, #d9f7f2 0%, transparent 55%),
-    linear-gradient(180deg, var(--bg-1), var(--bg-2));
+  min-height: 100vh;
 }
 
-.app-container {
-  @apply max-w-6xl mx-auto px-4 md:px-6;
+/* Animations */
+@keyframes fadeUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to   { opacity: 1; transform: translateY(0); }
+}
+@keyframes shake {
+  0%, 100% { transform: translateX(0); }
+  25%       { transform: translateX(-4px); }
+  75%       { transform: translateX(4px); }
+}
+@keyframes cellPop {
+  0%   { transform: scale(1); }
+  50%  { transform: scale(1.18); }
+  100% { transform: scale(1); }
+}
+@keyframes pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: .7; }
 }
 
-.glass-panel {
-  background: color-mix(in srgb, var(--panel) 85%, transparent);
-  border: 1px solid var(--line);
-  border-radius: 14px;
-  box-shadow: 0 10px 35px rgba(34, 63, 132, 0.12);
-  backdrop-filter: blur(8px);
-}
-
-.btn-soft {
-  @apply rounded-lg px-3 py-2 text-sm font-medium;
-  border: 1px solid var(--line);
-  background: #f7f9ff;
-  transition: transform 180ms ease, background-color 180ms ease, box-shadow 180ms ease;
-}
-
-.btn-soft:hover {
-  background: #eef3ff;
-  transform: translateY(-1px);
-  box-shadow: 0 8px 20px rgba(37, 99, 235, 0.14);
-}
-
-.btn-primary {
-  @apply rounded-lg px-3 py-2 text-sm font-semibold text-white;
-  background: linear-gradient(120deg, #2563eb, #0ea5e9);
-  transition: transform 180ms ease, box-shadow 180ms ease, opacity 180ms ease;
-}
-
-.btn-primary:hover {
-  transform: translateY(-1px);
-  box-shadow: 0 10px 20px rgba(37, 99, 235, 0.28);
-}
-
-.interactive {
-  transition: transform 140ms ease, background-color 140ms ease, border-color 140ms ease, box-shadow 140ms ease;
-}
-
-.interactive:active {
-  transform: scale(0.98);
-}
-
-.animate-fade-up {
-  animation: fade-up 420ms ease both;
-}
-
-.stagger > * {
-  opacity: 0;
-  transform: translateY(8px);
-  animation: fade-up 420ms ease forwards;
-}
-
-.stagger > *:nth-child(1) { animation-delay: 30ms; }
-.stagger > *:nth-child(2) { animation-delay: 80ms; }
-.stagger > *:nth-child(3) { animation-delay: 130ms; }
-.stagger > *:nth-child(4) { animation-delay: 180ms; }
-
-@keyframes fade-up {
-  from {
-    opacity: 0;
-    transform: translateY(10px);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0);
-  }
-}
-
-@keyframes pulse-soft {
-  0%, 100% { box-shadow: 0 0 0 0 rgba(20, 184, 166, 0.22); }
-  50% { box-shadow: 0 0 0 6px rgba(20, 184, 166, 0); }
-}
-
-.pulse-soft {
-  animation: pulse-soft 1200ms ease infinite;
-}
+.animate-fade-up { animation: fadeUp .45s ease both; }
+.animate-shake   { animation: shake .25s ease; }
+.animate-pop     { animation: cellPop .2s ease; }

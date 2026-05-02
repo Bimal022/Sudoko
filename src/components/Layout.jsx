@@ -1,11 +1,12 @@
 import React from 'react'
 import Header from './Header'
+import styles from './Layout.module.css'
 
 export default function Layout({ children }) {
   return (
-    <div className="min-h-screen flex flex-col">
+    <div className={styles.root}>
       <Header />
-      <main className="flex-1 app-container mt-6 pb-10 animate-fade-up">{children}</main>
+      <main className={styles.main}>{children}</main>
     </div>
   )
 }

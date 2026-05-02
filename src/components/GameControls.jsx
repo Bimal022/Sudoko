@@ -1,5 +1,6 @@
 import React from 'react'
 import { useGame } from '../context/GameContext'
+import styles from './GameControls.module.css'
 
 function formatTime(s) {
   const mm = String(Math.floor(s / 60)).padStart(2, '0')
@@ -7,20 +8,45 @@ function formatTime(s) {
   return `${mm}:${ss}`
 }
 
+const DIFFICULTIES = ['easy', 'medium', 'hard']
+
 export default function GameControls() {
   const { seconds, mistakes, newGame, difficulty, win } = useGame()
 
   return (
-    <div className="stagger flex flex-wrap items-center gap-2 lg:gap-3">
-      <div className="glass-panel px-3 py-2 text-sm text-slate-700">Time: <span className="font-mono font-semibold">{formatTime(seconds)}</span></div>
-      <div className="glass-panel px-3 py-2 text-sm text-slate-700">Mistakes: <span className="font-semibold">{mistakes}</span></div>
-      <div className="glass-panel px-3 py-2 text-xs uppercase tracking-wide text-slate-500">Mode: <span className="font-semibold text-slate-700">{difficulty}</span></div>
-      <div className="flex gap-2">
-        <button className="btn-soft interactive" onClick={() => newGame('easy')}>Easy</button>
-        <button className="btn-soft interactive" onClick={() => newGame('medium')}>Medium</button>
-        <button className="btn-primary interactive" onClick={() => newGame('hard')}>Hard</button>
+    <div className={styles.bar}>
+      <div className={styles.stats}>
+        <div className={styles.pill}>
+          <span className={styles.pillIcon}>⏱</span>
+          <span className={styles.pillVal}>{formatTime(seconds)}</span>
+        </div>
+        <div className={styles.pill}>
+          <span className={styles.pillIcon}>✕</span>
+          <span className={styles.pillVal}>{mistakes}</span>
+          <span className={styles.pillSub}>/5</span>
+        </div>
+        <div className={`${styles.pill} ${styles.diffPill}`}>
+          {difficulty.charAt(0).toUpperCase() + difficulty.slice(1)}
+        </div>
       </div>
-      {win && <div className="rounded-lg border border-emerald-200 bg-emerald-50 px-3 py-2 text-emerald-700 font-semibold pulse-soft">Solved!</div>}
+
+      <div className={styles.buttons}>
+        {DIFFICULTIES.map(d => (
+          <button
+            key={d}
+            className={`${styles.diffBtn} ${difficulty === d ? styles.active : ''}`}
+            onClick={() => newGame(d)}
+          >
+            {d.charAt(0).toUpperCase() + d.slice(1)}
+          </button>
+        ))}
+      </div>
+
+      {win && (
+        <div className={styles.winBadge}>
+          ✓ Solved!
+        </div>
+      )}
     </div>
   )
 }
